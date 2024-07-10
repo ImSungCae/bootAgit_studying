@@ -1,4 +1,4 @@
-# bootAgit_studying
+# bootAgit_studying_ImSeongChae
 
 ## 1. 해피 아일랜드의 수학자
 
