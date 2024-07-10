@@ -148,7 +148,7 @@ public class Rome {
         Scanner sc = new Scanner(System.in);
         System.out.print("로마 숫자를 입력하시오 : ");
         String romeNum = sc.next();
-        
+
 //        문자열의 길이가 15 초과일시
         if(romeNum.length() > 15){
             System.out.println("로마 숫자 문자열의 길이는 1 이상 15 이하 입니다.");
@@ -156,6 +156,7 @@ public class Rome {
         }
 //        결과값을 받기위한 변수 result 선언
         int result = 0;
+        int repeatNumCount = 0;
 
 //        로마 숫자 문자열의 자리마다 값을 지정하기 위해 ArrayList 선언
         ArrayList<String> romeNumArr = new ArrayList<>();
@@ -180,7 +181,8 @@ public class Rome {
         for(String key : romeCodeMap.keySet()){
 //            IIX, VX 와 같은 예외 상황 : Map에 key의 값이 있을경우 return  (romeCodeMap.get(key) == result)
 //            위에 조건만 넣을경우 단일 문자를 넣을 때(I,V,X ...) return하게 돼서 romeNum.length()>1 조건 추가
-            if(romeCodeMap.get(key) == result && romeNum.length()>1){
+//            ArrayList 같은 기호가 4번반복 될시 조건 추가 ( || romeNumArr.lastIndexOf(key) - romeNumArr.indexOf(key) + 1  > 3)
+            if(romeCodeMap.get(key) == result && romeNum.length()>1 || romeNumArr.lastIndexOf(key) - romeNumArr.indexOf(key) + 1  > 3){
                 System.out.println("잘못된 로마 숫자 표기입니다.");
                 return;
             }
@@ -194,6 +196,7 @@ public class Rome {
 
     }
 }
+
 
 ```
 
