@@ -111,14 +111,103 @@ public class LuckyNum {
 ## 2. 로마 제국의 코드 해독
 
 
+**1. 문제 분석**
+
+각 기호별로 숫자가 대입 되어있기때문에 HashMap을 사용해서 Key, Value값으로 기호에 맞는 숫자를 가져오면 좋겠다 생각했습니다.<br>
+먼저 HashMap에 기호에 맞는 숫자를 put(key, value)으로 넣고 문자열을 자릿수별로 쪼개어 자릿수에 맞는 HashMap을 get(key)으로 <br>
+결과값 변수에 값을 더해주면 되겠다 생각했습니다. 그러기 위해선 먼저 자릿수 길이 만큼 확장을 시켜줄 ArrayList를 사용했고,<br>
+자릿수 별로 ArryayList에 넣은 **문자열** 을 HsahMap의 키로 찾아 Value의 값을 결과값에 복합대입연산자(+=) 로 연산하였습니다.<br>
+이후 추가 조건에 맞게 작성해야겠다 생각했습니다.
 
 
+**2. 설계**
 
 
+**3. 구현**
 
 
-## 3. 외계어 사전 만들기
+```
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
 
+public class Rome {
+    public static void main(String[] args) {
+//        각 기호마다 지정된 숫자가 있기 때문에 HashMap을 사용해야겠다 생각했습니다.
+        HashMap<String, Integer> romeCodeMap = new HashMap<>();
+//        각 기호의 맞게 값을 추가
+        romeCodeMap.put("I" , 1);
+        romeCodeMap.put("V" , 5);
+        romeCodeMap.put("X" , 10);
+        romeCodeMap.put("L" , 50);
+        romeCodeMap.put("C" , 100);
+        romeCodeMap.put("D" , 500);
+        romeCodeMap.put("M" , 1000);
+
+//        로마 숫자 문자열 입력
+        Scanner sc = new Scanner(System.in);
+        System.out.print("로마 숫자를 입력하시오 : ");
+        String romeNum = sc.next();
+        
+//        문자열의 길이가 15 초과일시
+        if(romeNum.length() > 15){
+            System.out.println("로마 숫자 문자열의 길이는 1 이상 15 이하 입니다.");
+            return;
+        }
+//        결과값을 받기위한 변수 result 선언
+        int result = 0;
+
+//        로마 숫자 문자열의 자리마다 값을 지정하기 위해 ArrayList 선언
+        ArrayList<String> romeNumArr = new ArrayList<>();
+
+//        로마 숫자 문자열의 길이 만큼 반복문 실행
+        for (int i = 0; i < romeNum.length(); i++) {
+//            인덱스 값에 맞게 ArrayList의 대입
+            romeNumArr.add("" + romeNum.charAt(i));
+
+//            i-1을 쓰기 때문에 0번째가 아닌 1번째부터 조건을 넣기위해 (i != 0) 조건 추가
+//            작은 기호가 큰 기호의 왼쪽에 위치하는지 판별하기 위한 조건문 romeCodeMap.get(romeNumArr.get(i)) > romeCodeMap.get(romeNumArr.get(i-1))
+            if(i != 0 && romeCodeMap.get(romeNumArr.get(i)) > romeCodeMap.get(romeNumArr.get(i-1))){
+
+//                몇가지 계산을 해봤을시에 큰값 기호의 작은값기호*2 한 값을 넣게 되면 조건에 맞게 계산이 됨
+                result += romeCodeMap.get(romeNumArr.get(i)) - romeCodeMap.get(romeNumArr.get(i-1)) * 2;
+
+//               그 외의 상황
+            }else{
+                result += romeCodeMap.get(romeNumArr.get(i));
+            }
+        }
+        for(String key : romeCodeMap.keySet()){
+//            IIX, VX 와 같은 예외 상황 : Map에 key의 값이 있을경우 return  (romeCodeMap.get(key) == result)
+//            위에 조건만 넣을경우 단일 문자를 넣을 때(I,V,X ...) return하게 돼서 romeNum.length()>1 조건 추가
+            if(romeCodeMap.get(key) == result && romeNum.length()>1){
+                System.out.println("잘못된 로마 숫자 표기입니다.");
+                return;
+            }
+        }
+//        가장 큰 값 3999를 넘을 시
+        if(result > 3999){
+            System.out.println("표현할 수 없는 범위의 수입니다.");
+        }else{
+            System.out.println(result);
+        }
+
+    }
+}
+
+```
+
+
+**4. 테스트 및 개선**
+
+추가 조건에 대해 어려움이 있었습니다. 추가 조건에 대한 판별은 어떤식으로 생각하였나면<br>
+첫번째 조건으로 문자열의 길이가 15 초과일시에 대한 조건문을 넣고<br>
+두번째론 작은 기호가 큰 기호의 왼쪽에 위치한지는 반복문안에 조건문으로 ArrayList의 **i** 번째 값의 해당하는 <br>
+HashMap의 Value값의 크기가 **i-1** 부터 큰지 조건을 넣었고 **i-1**을 사용하기때문에  <br>
+i가 0번째가 아닌 1번째부터 조건을 판별하기 위해 **&&** 연산자를 추가로 조건을 넣었습니다. <br>
+세번째로는 IIX와 VX같은 예외상황은 계산했을시에 각각 10 , 5 인데 이럴시 기호의 값과 동일하기 때문에 조건문을 넣었습니다.<br>
+그러고보니 한자릿수의 (I,V,X ...) 기호를 넣는 상황과 4와 9관련된(IIII,VIIII) 수에 대한 예외 조건이 없었습니다.
+ArrayList의 추가된 값이 4번 반복될시 (4 와 9 관련된 예외) 에 대한 조건을 추가하였습니다.
 
 
 
